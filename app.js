@@ -5,7 +5,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { tool, createAgent } from "langchain";
+import { tool, createAgent } from "@langchain/langgraph"; // fixed
 import { z } from "zod";
 
 // ---------------- App Config ----------------
@@ -68,14 +68,11 @@ let conversationHistory = [
 
 // ---------------- AI Follow-Up Generator ----------------
 async function generateFollowUps(userMessage) {
-  // Add user message to memory
   conversationHistory.push({ role: "user", content: userMessage || "Let's start the interview." });
 
-  // Generate next question
   const res = await agent.invoke({ messages: conversationHistory });
   const aiReply = res.messages?.[res.messages.length - 1]?.content ?? "Can you elaborate?";
 
-  // Save AI reply to memory
   conversationHistory.push({ role: "assistant", content: aiReply });
 
   return aiReply;
@@ -88,8 +85,7 @@ app.post("/ask", async (req, res) => {
 
     if (!message || checkUnrelated(message)) {
       return res.json({
-        reply:
-          "Hi Shrikant are ypu redy to ypu interview",
+        reply: "Hi Shrikant, are you ready for your interview?",
         history: conversationHistory,
       });
     }
@@ -104,14 +100,11 @@ app.post("/ask", async (req, res) => {
 
 // ---------------- Feedback Endpoint ----------------
 app.get("/feedback", (req, res) => {
-  // Return all Q&A in order
-  // Filter out system messages
   const qaHistory = conversationHistory.filter(
     (msg) => msg.role === "user" || msg.role === "assistant"
   );
   res.json({ history: qaHistory });
 });
-
 
 // ---------------- Reset Endpoint ----------------
 app.post("/reset", (req, res) => {
