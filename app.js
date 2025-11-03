@@ -89,7 +89,7 @@ app.post("/ask", async (req, res) => {
     if (!message || checkUnrelated(message)) {
       return res.json({
         reply:
-          "Hi Shrikant are ypu redy to ypu interview",
+          "Hi Shrikant, are you ready for your Interview ?",
         history: conversationHistory,
       });
     }
@@ -128,3 +128,4 @@ app.post("/reset", (req, res) => {
 // ---------------- Start Server ----------------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+
